@@ -17,6 +17,7 @@ func (h *Handler) getAllMeasures(c *gin.Context) {
 
 	c.JSON(http.StatusOK, measures)
 }
+
 func (h *Handler) getMeasureByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -40,14 +41,12 @@ func (h *Handler) createMeasure(c *gin.Context) {
 		return
 	}
 
-	// Вызов метода Create вашего репозитория для вставки новой записи о единице измерения
 	createdMeasure, err := h.services.MeasureItem.Create(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	// Вернуть успешный ответ с созданной единицей измерения
 	c.JSON(http.StatusOK, createdMeasure)
 }
 
