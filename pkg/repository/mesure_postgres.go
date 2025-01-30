@@ -53,7 +53,6 @@ func (r *MeasurePostgres) GetById(id int) (api.Measure, error) {
 }
 
 func (r *MeasurePostgres) Delete(id int) error {
-	// Проверка существования продукта с указанным идентификатором
 	existsQuery := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE id = $1)", measureTable)
 	var exists bool
 	err := r.db.Get(&exists, existsQuery, id)
@@ -64,23 +63,19 @@ func (r *MeasurePostgres) Delete(id int) error {
 		return fmt.Errorf("item with id %d does not exist", id)
 	}
 
-	// Начало транзакции
 	tx, err := r.db.Begin()
 	if err != nil {
 		return err
 	}
 
-	// SQL запрос для удаления продукта по идентификатору
 	deleteQuery := fmt.Sprintf("DELETE FROM %s WHERE id = $1", measureTable)
 
-	// Выполнение SQL запроса
 	_, err = tx.Exec(deleteQuery, id)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 
-	// Фиксация транзакции
 	if err := tx.Commit(); err != nil {
 		return err
 	}
@@ -89,7 +84,6 @@ func (r *MeasurePostgres) Delete(id int) error {
 }
 
 func (r *MeasurePostgres) Update(id int, input api.UpdateMeasureInput) error {
-	// Проверка существования единицы измерения с указанным идентификатором
 	existsQuery := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE id = $1)", measureTable)
 	var exists bool
 	err := r.db.Get(&exists, existsQuery, id)
